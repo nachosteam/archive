@@ -1,0 +1,1 @@
+"C:\Users\Admin B\Desktop\mingw64\bin\x86_64-w64-mingw32-g++.exe" -static -lstdc++fs -std=c++17 main.cpp repo.cpp account.cpp pkg-del.cpp other_comms.cpp -o main-win.exe

@@ -1,0 +1,39 @@
+name: Building from source
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/**.md'
+      - '**/**.yaml'
+
+env:
+  CFLAGS: -static -lstdc++fs -std=c++17
+
+jobs:
+  build-nightly:
+    name: Build Nightly
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ g++-mingw-w64
+      - name: Pull code
+        uses: actions/checkout@v4
+      - name: Building
+        run: |
+          echo ">>> Building..."
+          mkdir -p bin
+          echo "Compiling for linux..."
+          g++ $CFLAGS main.cpp -o bin/nachos_console-linux-amd64
+          echo "Compiling for windows..."
+          x86_64-w64-mingw32-g++ $CFLAGS main.cpp -o bin/nachos_console-win-amd64.exe
+      - name: Upload binaries to release
+        uses: akkuman/gitea-release-action@v1
+        with:
+          name: Nightly Build
+          tag_name: nightly
+          prerelease: true
+          files: |-
+            bin/**

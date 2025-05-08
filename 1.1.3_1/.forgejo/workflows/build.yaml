@@ -1,0 +1,41 @@
+name: Building from source
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/**.md'
+jobs:
+  build-nightly:
+    name: Build Nightly
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ g++-mingw-w64 cmake
+      - name: Pull code
+        uses: actions/checkout@v4
+      - name: Building
+        run: |
+          mkdir bin out
+          cd bin
+
+          echo ">>> Building for linux"
+          cmake .. && make -j`nproc`
+          mv nachos-console* ../out/nachos_console-linux
+          rm -rf *
+
+          echo ">>> Building for windows"
+          CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ cmake .. && make -j`nproc`
+          mv nachos-console* ../out/nachos_console-windows.exe
+          cd ..
+      - name: Upload binaries to release
+        uses: https://forgejo.r2squad.ru/honakac/gitea-release-action@v1
+        with:
+          tag_name: nightly
+          name: Nightly Build
+          token: ${{ github.token }}
+          prerelease: true
+          files: |-
+            out/**

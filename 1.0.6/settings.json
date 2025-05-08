@@ -1,0 +1,7 @@
+{
+    "repos": [
+        "https://forgejo.r2squad.ru/eraserteam/nc-repo",
+		"https://raw.githubusercontent.com/nachosteam/nc-repo/"
+    ],
+    "username": "tolik"
+}
